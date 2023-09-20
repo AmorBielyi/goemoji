@@ -57,13 +57,12 @@ jobs:
         id: setup-go
         uses: actions/setup-go@v4
 
-#      - name: Restore/cache build dependencies
-#        uses: actions/cache@v3
-#        with:
-#          path: |
-#            ~/.cache/go-build
-#            ~/go/pkg/mod
-#          key: ${{ runner.os }}-${{ github.repository }}-godeps-${{ hashFiles('go.mod') }}
+      - name: Restore/cache tests
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+          key: ${{ runner.os }}-${{ github.repository }}-gotestdeps-${{ hashFiles('go.mod') }}
 
       - name: Run unit tests
         run: go test -v ./...
