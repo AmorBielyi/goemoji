@@ -37,6 +37,9 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
+      - name: Download dependency
+        run: go mod tidy
+
   build-and-test:
     needs: prepare
     runs-on: ubuntu-latest
