@@ -40,10 +40,7 @@ jobs:
       - name: Download dependency
         run: go mod tidy
 
-      - name: Build and Race
-        run: go build -v -race .
-
-  build-and-test:
+  test:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
@@ -62,7 +59,31 @@ jobs:
         with:
           path: |
             ~/.cache/go-build
-          key: ${{ runner.os }}-${{ github.repository }}-gotestdeps-${{ hashFiles('go.mod') }}
+          key: ${{ runner.os }}-${{ github.repository }}-go_test_deps-${{ hashFiles('go.mod') }}
 
       - name: Run unit tests
         run: go test -v ./...
+
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore checked out repository
+        uses: actions/cache@v3
+        with:
+          path: ${{ runner.workspace }}/
+          key: ${{ runner.os }}-${{ github.repository }}-repo-${{ needs.prepare.outputs.commit-sha }}
+
+      - name: Restore Go
+        id: setup-go
+        uses: actions/setup-go@v4
+
+      - name: Restore/cache tests
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+          key: ${{ runner.os }}-${{ github.repository }}-go_build_deps-${{ hashFiles('go.mod') }}
+
+      - name: Build and Race
+        run: go build -v -race .
